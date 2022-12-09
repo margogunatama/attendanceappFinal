@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance App|<%= title %></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css"/>
+    <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/stylesheets/simple-sidebar.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.10.12/css/jquery.dataTables.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/style.css'/>
+    <link rel='stylesheet' href='/stylesheets/style2.css'/>
+
+
+</head>
+<body>
+    <%- include('navbar.ejs') %>
+<div id="wrapper">
+    <!-- Sidebar -->
+    <%- include('menu.ejs') %><!-- /#sidebar-wrapper -->
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid xyz">
+            <div class="row">
+                <div class="col-lg-12">
+                    <!--<h1><label id="name">Muneeb Jutt</label></h1>
+                    <h4><label id="email">M@gmail.com</label></h4>-->
+                    <br>
+                    <div style="height:600px; overflow: auto">
+                        <% if (found === 1){ %>
+                        <table id="example" class="display" cellspacing="0" style="height: 10%; overflow: auto;">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Tanggal </th>
+                                <th>Absen Masuk</th>
+                                <th>Absen Pulang</th>
+                                <th>Keterangan</th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            <% attendance.forEach(function(item, i){ %>
+
+                            <tr>
+                                <td><%= i + 1 %></td>
+                                <td><%= moment(item.month + "/" + item.date + "/" + item.year).format('MMMM Do YYYY'); %></td>
+                                <td><%= item.waktumasuk%></td>
+                                <td><%= item.waktupulang%></td>
+                                <td><%= item.keterangan%></td>
+                            </tr>
+                            <% }); %>
+                            </tbody>
+                        </table>
+                        <% }else{ %>
+                        <p> Unable to find attendance for given month and year</p>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+
+
+</div>
+<!-- /#wrapper -->
+<!-- jQuery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.js" charset="UTF-8"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.js" charset="UTF-8"></script>
+<script src="https://cdn.datatables.net/1.10.12/js/jquery.dataTables.min.js"></script>
+<script src="/javascripts/sidebar_menu.js"></script>
+<script>
+
+    $(document).ready(function () {
+        $('#example').dataTable({
+            /* No ordering applied by DataTables during initialisation */
+            "order": []
+        });
+        // Setup - add a text input to each footer cell
+        $('#example tfoot th').each(function () {
+            var title = $(this).text();
+            if (title != " ") {
+                $(this).html('<input type="text" class="form-control" placeholder="Search ' + title + '" />');
+            }
+        });
+
+        // DataTable
+        var table = $('#example').DataTable();
+
+        // Apply the search
+        table.columns().every(function () {
+            var that = this;
+
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                            .search(this.value)
+                            .draw();
+                }
+            });
+        });
+        for (i = new Date().getFullYear(); i > 1900; i--) {
+            $('#year').append($('<option />').val(i).html(i));
+        }
+    });
+</script>
+<script>
+    // $(document).ready(function () {
+    //     for (i = new Date().getFullYear(); i > 1900; i--) {
+    //         $('#year').append($('<option />').val(i).html(i));
+    //     }
+    // });
+    window.setTimeout("waktu()",1000); 
+    function waktu() { 
+    var tanggal = new Date(); 
+    setTimeout("waktu()",1000); 
+    document.getElementById("jam").innerHTML = tanggal.getHours(); 
+    document.getElementById("menit").innerHTML = tanggal.getMinutes();
+    document.getElementById("detik").innerHTML = tanggal.getSeconds();
+  } 
+
+  function absenmasuk() { 
+    const formabsen = document.getElementById('formabsen');
+    const jam = document.getElementById("jam").innerHTML; 
+   const menit = document.getElementById("menit").innerHTML; 
+   const detik = document.getElementById("detik").innerHTML;
+   const Waktu = jam+':'+menit+':'+detik;
+   document.getElementById('waktumasuk').value = Waktu;
+   formabsen.submit();
+  } 
+
+  function absenkeluar() { 
+    const formabsen = document.getElementById('formabsen')
+    const jam = document.getElementById("jam").innerHTML; 
+   const menit = document.getElementById("menit").innerHTML; 
+   const detik = document.getElementById("detik").innerHTML;
+   const Waktu = jam+':'+menit+':'+detik;
+   if(jam < 8){
+    alert('Belum Waktu Pulang');
+   } else{
+   document.getElementById('waktupulang').value=Waktu;
+   formabsen.submit()}
+   
+  } 
+
+</script>
+</body>
+<%- include('absen.ejs') %>
+
+</html>
