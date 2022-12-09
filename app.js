@@ -17,10 +17,11 @@ var employee = require('./routes/employee');
 var manager = require('./routes/manager');
 
 expressValidator = require('express-validator');
+require('dotenv').config();
 
 mongoose.Promise = global.Promise;
 // mongoose.connect('mongodb://localhost:27017/HRMS');
-var mongoDB = "mongodb://localhost:27017/HRMS";
+var mongoDB = process.env.MONGO_URI;
 
 mongoose.connect(mongoDB, {
     useNewUrlParser: true,
