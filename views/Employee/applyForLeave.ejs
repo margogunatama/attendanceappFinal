@@ -24,6 +24,7 @@
                 <div class="col-lg-12">
                     <h1>Pengajuan Lembur</h1>
                     <div id="menu1" style="overflow: auto;">
+                        <div id="ket_out" style="display:none;"><%= ket_out %></div>
                         <form class="form-group-sm" action="/employee/apply-for-leave" method="post" id="form1">
                             <div class="form-group">
                                 <label for="title">Tujuan Lembur:</label>
@@ -42,8 +43,8 @@
                             <div class="form-group">
                                 <label for="tipehari">Tipe Hari Lembur:</label>
                                                              
-                                <select class="form-control" id="tipehari" name="tipehari">
-                                    <option disabled selected>--Pilih Tipe Hari Lembur--</option>
+                                <select class="form-control" id="tipehari" name="tipehari" required>
+                                    <option disabled selected value="">--Pilih Tipe Hari Lembur--</option>
                                     <option value="Hari Kerja">Hari Kerja</option>
                                     <option value="Hari Libur">Hari Libur</option>
                                     
@@ -98,6 +99,11 @@
             $('#year').append($('<option />').val(i).html(i));
         }
     });
+</script>
+<script type="text/javascript">
+    if($('#ket_out').text()=='Belum Waktu Jam Lembur'){
+        alert($('#ket_out').text());
+    }
 </script>
 </body>
 <%- include('absen.ejs') %>

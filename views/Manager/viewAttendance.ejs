@@ -26,6 +26,7 @@
                     <h4><label id="email">M@gmail.com</label></h4>-->
                     <br>
                     <div style="height:600px; overflow: auto">
+                        <div id="ket_out" style="display:none;"><%= ket_out %></div>
                         <% if (found === 1){ %>
                         <table id="example" class="display" cellspacing="0" style="height: 10%; overflow: auto;">
                             <thead>
@@ -52,7 +53,8 @@
                             </tbody>
                         </table>
                         <% }else{ %>
-                        <p> Unable to find attendance for given month and year</p>
+                        <p> Data kehadiran tidak ditemukan
+                        </p>
                         <% } %>
                     </div>
                 </div>
@@ -104,45 +106,13 @@
         }
     });
 </script>
-<script>
-    // $(document).ready(function () {
-    //     for (i = new Date().getFullYear(); i > 1900; i--) {
-    //         $('#year').append($('<option />').val(i).html(i));
-    //     }
-    // });
-    window.setTimeout("waktu()",1000); 
-    function waktu() { 
-    var tanggal = new Date(); 
-    setTimeout("waktu()",1000); 
-    document.getElementById("jam").innerHTML = tanggal.getHours(); 
-    document.getElementById("menit").innerHTML = tanggal.getMinutes();
-    document.getElementById("detik").innerHTML = tanggal.getSeconds();
-  } 
-
-  function absenmasuk() { 
-    const formabsen = document.getElementById('formabsen');
-    const jam = document.getElementById("jam").innerHTML; 
-   const menit = document.getElementById("menit").innerHTML; 
-   const detik = document.getElementById("detik").innerHTML;
-   const Waktu = jam+':'+menit+':'+detik;
-   document.getElementById('waktumasuk').value = Waktu;
-   formabsen.submit();
-  } 
-
-  function absenkeluar() { 
-    const formabsen = document.getElementById('formabsen')
-    const jam = document.getElementById("jam").innerHTML; 
-   const menit = document.getElementById("menit").innerHTML; 
-   const detik = document.getElementById("detik").innerHTML;
-   const Waktu = jam+':'+menit+':'+detik;
-   if(jam < 8){
-    alert('Belum Waktu Pulang');
-   } else{
-   document.getElementById('waktupulang').value=Waktu;
-   formabsen.submit()}
-   
-  } 
-
+<script type="text/javascript">
+    if($('#ket_out').text()=='Belum Waktu Jam Pulang'){
+        alert($('#ket_out').text());
+    }
+    if($('#ket_out').text()=='Belum Waktu Jam Masuk'){
+        alert($('#ket_out').text());
+    }
 </script>
 </body>
 <%- include('absen.ejs') %>

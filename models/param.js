@@ -6,7 +6,6 @@ var UserSchema = new Schema({
     clockout: {type: String, required: true},
     earlyclockin: {type: String, required: true},
     earlyclockout: {type: String, required: true},
-    jamlembur: {type: String, required: true},
 
 });
 

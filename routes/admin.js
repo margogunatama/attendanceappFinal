@@ -283,7 +283,6 @@ router.post('/add-settingparam/', function addParam(req, res, next) {
     newparam.clockout = req.body.clockout;
     newparam.earlyclockin = req.body.earlyclockin;
     newparam.earlyclockout = req.body.earlyclockout;
-    newparam.jamlembur = req.body.jamlembur;
     var byid='6391dcbe6b70a64ad8d8ce58';
     Param.remove({}, function(err, result) { 
         if (err) {

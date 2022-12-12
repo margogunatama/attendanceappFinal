@@ -10,9 +10,28 @@
     function waktu() { 
     var tanggal = new Date(); 
     setTimeout("waktu()",1000); 
-    document.getElementById("jam").innerHTML = tanggal.getHours(); 
-    document.getElementById("menit").innerHTML = tanggal.getMinutes();
-    document.getElementById("detik").innerHTML = tanggal.getSeconds();
+    if (tanggal.getHours() < 10){
+        jam_all="0" + tanggal.getHours();
+    }else{
+        jam_all=tanggal.getHours();
+    }
+   
+
+    if (tanggal.getMinutes() < 10){
+        menit_all="0" + tanggal.getMinutes();
+    }else{
+        menit_all=tanggal.getMinutes();
+    }
+
+    if (tanggal.getSeconds() < 10){
+        sec_all="0" + tanggal.getSeconds();
+    }else{
+        sec_all=tanggal.getSeconds();
+    }
+    
+    document.getElementById("jam").innerHTML = jam_all; 
+    document.getElementById("menit").innerHTML = menit_all;
+    document.getElementById("detik").innerHTML = sec_all;
   } 
 
   function absenmasuk() { 
@@ -31,11 +50,8 @@
    const menit = document.getElementById("menit").innerHTML; 
    const detik = document.getElementById("detik").innerHTML;
    const Waktu = jam+':'+menit+':'+detik;
-   if(jam < 8){
-    alert('Belum Waktu Pulang');
-   } else{
    document.getElementById('waktupulang').value=Waktu;
-   formabsen.submit()}
+   formabsen.submit()
    
   } 
 
@@ -78,9 +94,11 @@
                     <button type="button"  onclick="absenmasuk()" class="btn btn-success punch-btn" disabled>Absen Masuk</button>
                     <% } else { %>
                         <button type="button"  onclick="absenmasuk()" class="btn btn-success punch-btn">Absen Masuk</button>
+                        <input type="hidden" id="tanda" name="tanda" value="0"/>
                     <% } %> 
                     <% if(present==true && isPulang == false){ %>
                         <button type="button"  onclick="absenkeluar()" class="btn btn-danger punch-btn" >Absen Pulang</button>
+                        <input type="hidden" id="tanda" name="tanda" value="1"/>
                         <% } else { %>
                             <button type="button"  onclick="absenkeluar()" class="btn btn-danger punch-btn" disabled>Absen Pulang</button>
                         <% } %> 

@@ -60,14 +60,7 @@
                                 <input type="time" class="form-control" value="<%= item.earlyclockout %>" required="required" id="earlyclockout" name="earlyclockout">
                                 <% } %>
                             </div>
-                            <div class="form-group">
-                                <label for="jamlembur">Standar Jam Standard Lembur:</label>
-                                <% if (hasErrors){ %>
-                                <input type="time" class="form-control" value="<%= item.jamlembur %>" required="required" id="jamlembur" name="jamlembur">
-                                <% }else{ %>
-                                <input type="time" class="form-control" value="<%= item.jamlembur %>" required="required" id="jamlembur" name="jamlembur">
-                                <% } %>
-                            </div>
+                            
                             
                             <% }) %>
 
@@ -86,7 +79,7 @@
                                     <% if (hasErrors){ %>
                                     <input type="time" class="form-control" value="<%= param.clockout %>" required="required" id="clockout" name="clockout">
                                     <% }else{ %>
-                                    <input type="text" class="form-control" value="<%= param.clockout %>" required="required" id="clockout" name="clockout">
+                                    <input type="time" class="form-control" value="<%= param.clockout %>" required="required" id="clockout" name="clockout">
                                     <% } %>
                                 </div>
                                 
@@ -106,14 +99,7 @@
                                     <input type="time" class="form-control" value="<%= param.earlyclockout %>" required="required" id="earlyclockout" name="earlyclockout">
                                     <% } %>
                                 </div>
-                                <div class="form-group">
-                                    <label for="jamlembur">Standar Jam Standard Lembur:</label>
-                                    <% if (hasErrors){ %>
-                                    <input type="time" class="form-control" value="<%= param.jamlembur %>" required="required" id="jamlembur" name="jamlembur">
-                                    <% }else{ %>
-                                    <input type="time" class="form-control" value="<%= param.jamlembur %>" required="required" id="jamlembur" name="jamlembur">
-                                    <% } %>
-                                </div>
+                                
 
                             <% } %>
                             

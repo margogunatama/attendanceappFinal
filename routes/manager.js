@@ -3,6 +3,7 @@ var router = express.Router();
 var User = require('../models/user');
 var Leave = require('../models/leave');
 var Attendance = require('../models/attendance');
+var Param = require('../models/param');
 var moment = require('moment');
 var flash = require('connect-flash');
 var csrf = require('csurf');
@@ -61,45 +62,7 @@ router.get('/view-employees', function viewAllEmployees(req, res, next) {
 
 });
 
-router.post('/mark-manager-attendance',async function markEmployeeAttendance(req, res, next) {
-    const attendance =  await Attendance.findOneAndUpdate({
-        employeeID: req.user._id,
-        month: new Date().getMonth()+ 1,
-        date: new Date().getDate(),
-        year: new Date().getFullYear(),
-    }, {waktupulang:req.body.waktupulang})
 
-    if(!attendance){
-            var jam = req.body.waktumasuk.substring(0, 2)
-            if(jam > 8){
-                keterangan = "Terlambat"
-            } else if(jam <= 8){
-                keterangan = "Tepat Waktu"
-            } 
-            var newAttendance = new Attendance();
-            newAttendance.employeeID = req.user._id;
-            newAttendance.year = new Date().getFullYear();
-            newAttendance.month = new Date().getMonth() + 1;
-            newAttendance.date = new Date().getDate();
-            newAttendance.present = 1;
-            newAttendance.waktumasuk = req.body.waktumasuk;
-            newAttendance.waktupulang = 0;
-            newAttendance.keterangan = keterangan;
-            newAttendance.save(function saveAttendance(err) {
-                if (err) {
-                    console.log(err);
-                }
-
-            });
-        }
-        setTimeout(render_view, 900);
-        function render_view() {
-        res.redirect('/manager/view-attendance-current');
-        }
-
-    });
-
-module.exports = router;
 
 router.get('/leave-applications', function getLeaveApplications(req, res, next) {
 
@@ -224,6 +187,7 @@ router.get('/view-attendance-current', function viewCurrentlyMarkedAttendance(re
                 found: found,
                 attendance: attendanceChunks,
                 moment: moment,
+                ket_out:0,
                 present: docs ? docs.present : false,
                 isPulang: docs ? docs.waktupulang : false,
                 userName: req.session.user.name
@@ -288,6 +252,7 @@ router.post('/view-attendance', function viewAttendanceSheet(req, res, next) {
                 found: found,
                 attendance: attendanceChunks,
                 moment: moment,
+                ket_out:0,
                 present: docs ? docs.present : false,
                 isPulang: docs ? docs.waktupulang : false,
                 userName: req.session.user.name
@@ -301,37 +266,134 @@ router.post('/view-attendance', function viewAttendanceSheet(req, res, next) {
 
 
 router.post('/mark-manager-attendance',async function markEmployeeAttendance(req, res, next) {
-    const attendance =  await Attendance.findOneAndUpdate({
-        employeeID: req.user._id,
-        month: new Date().getMonth()+ 1,
-        date: new Date().getDate(),
-        year: new Date().getFullYear(),
-    }, {waktupulang:req.body.waktupulang})
-
-    if(!attendance){
-            var jam = req.body.waktumasuk.substring(0, 2)
-            if(jam > 8){
-                keterangan = "Terlambat"
-            } else if(jam <= 8){
-                keterangan = "Tepat Waktu"
-            } 
-            var newAttendance = new Attendance();
-            newAttendance.employeeID = req.user._id;
-            newAttendance.year = new Date().getFullYear();
-            newAttendance.month = new Date().getMonth() + 1;
-            newAttendance.date = new Date().getDate();
-            newAttendance.present = 1;
-            newAttendance.waktumasuk = req.body.waktumasuk;
-            newAttendance.waktupulang = 0;
-            newAttendance.keterangan = keterangan;
-            newAttendance.save(function saveAttendance(err) {
-                if (err) {
-                    console.log(err);
+    Param.find({}).sort({_id: -1}).exec(function getParam(err, docs) {
+        if(req.body.tanda==0){
+                var jam = req.body.waktumasuk.substring(0, 5)
+               //console.log(jam);
+               
+               jam_masuk=parseFloat((jam).replace(':', '.'));
+               jam_early_masuk_param=parseFloat((docs[0].earlyclockin).replace(':', '.'));
+   
+               if(jam_masuk < jam_early_masuk_param){
+                   ket_out="Belum Waktu Jam Masuk"
+                   var attendanceChunks = [];
+                           Attendance.find({
+                               employeeID: req.session.user._id,
+                               month: new Date().getMonth() + 1,
+                               year: new Date().getFullYear()
+                           }).sort({_id: -1}).exec(function getAttendanceSheet(err, docs) {
+                               var found = 0;
+                               if (docs.length > 0) {
+                                   found = 1;
+                               }
+                               for (var i = 0; i < docs.length; i++) {
+                                   attendanceChunks.push(docs[i]);
+                               } 
+                               Attendance.findOne({
+                                   employeeID: req.session.user._id,
+                                   month: new Date().getMonth()+ 1,
+                                   date: new Date().getDate(),
+                                   year: new Date().getFullYear(),
+                               }).exec(function getAttendance(err, docs){
+                                   res.render('Employee/viewAttendance', {
+                                       title: 'Attendance Sheet',
+                                       month: req.body.month,
+                                       csrfToken: req.csrfToken(),
+                                       found: found,
+                                       attendance: attendanceChunks,
+                                       moment: moment,
+                                       ket_out:ket_out,
+                                       present: docs ? docs.present : false,
+                                       isPulang: docs ? docs.waktupulang : false,
+                                       userName: req.session.user.name
+                                   });
+                               })
+                           });
+               }else{
+   
+                jam_masuk_param=parseFloat((docs[0].clockin).replace(':', '.'));
+    
+                if(jam_masuk > jam_masuk_param){
+                    keterangan = "Terlambat"
+                } else if(jam_masuk <= jam_masuk_param){
+                    keterangan = "Tepat Waktu"
+                }  
+    
+                var newAttendance = new Attendance();
+                newAttendance.employeeID = req.user._id;
+                newAttendance.year = new Date().getFullYear();
+                newAttendance.month = new Date().getMonth() + 1;
+                newAttendance.date = new Date().getDate();
+                newAttendance.present = 1;
+                newAttendance.waktumasuk = req.body.waktumasuk;
+                newAttendance.waktupulang = 0;
+                newAttendance.keterangan = keterangan;
+                 newAttendance.save(function saveAttendance(err) {
+                    if (err) {
+                        console.log(err);
+                    }
+    
+                }); 
+                setTimeout(render_view, 900);
+                function render_view() {
+                res.redirect('/manager/view-attendance-current');
                 }
-
-            });
-        }
-        res.redirect('/manager/view-attendance-current');
+            }
+    
+            }else{
+                
+                    var jam2 = req.body.waktupulang.substring(0, 5)
+                    jam_pulang=parseFloat((jam2).replace(':', '.'));
+                    jam_pulang_param=parseFloat((docs[0].clockout).replace(':', '.'));
+            
+                    if(jam_pulang < jam_pulang_param){
+                        ket_out = "Belum Waktu Pulang";
+                         
+                        var attendanceChunks = [];
+                            Attendance.find({
+                                employeeID: req.session.user._id,
+                                month: new Date().getMonth() + 1,
+                                year: new Date().getFullYear()
+                            }).sort({_id: -1}).exec(function getAttendanceSheet(err, docs) {
+                                var found = 0;
+                                if (docs.length > 0) {
+                                    found = 1;
+                                }
+                                for (var i = 0; i < docs.length; i++) {
+                                    attendanceChunks.push(docs[i]);
+                                } 
+                                Attendance.findOne({
+                                    employeeID: req.session.user._id,
+                                    month: new Date().getMonth()+ 1,
+                                    date: new Date().getDate(),
+                                    year: new Date().getFullYear(),
+                                }).exec(function getAttendance(err, docs){
+                                    res.render('Manager/viewAttendance', {
+                                        title: 'Attendance Sheet',
+                                        month: req.body.month,
+                                        csrfToken: req.csrfToken(),
+                                        found: found,
+                                        attendance: attendanceChunks,
+                                        moment: moment,
+                                        ket_out:ket_out,
+                                        present: docs ? docs.present : false,
+                                        isPulang: docs ? docs.waktupulang : false,
+                                        userName: req.session.user.name
+                                    });
+                                })
+                            });
+    
+                    } else if(jam_pulang >= jam_pulang_param){
+                        ket_out = 0;
+                        res.redirect('/manager/update_pulang/'+req.body.waktupulang);
+                     
+                    } 
+               
+    
+            }
+    
+          
+        });
 
     });
 
@@ -346,3 +408,19 @@ function isLoggedIn(req, res, next) {
     }
     res.redirect('/');
 }
+
+router.get('/update_pulang/:id',async function updatepulangs(req, res, next) {
+    const attendance = await Attendance.findOneAndUpdate({
+        employeeID: req.user._id,
+        month: new Date().getMonth()+ 1,
+        date: new Date().getDate(),
+        year: new Date().getFullYear(),
+    }, {
+        waktupulang:req.params.id
+    })
+    setTimeout(render_view, 900);
+        function render_view() {
+        res.redirect('/manager/view-attendance-current');
+        }
+
+});
