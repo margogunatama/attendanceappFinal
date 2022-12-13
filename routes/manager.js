@@ -347,7 +347,7 @@ router.post('/mark-manager-attendance',async function markEmployeeAttendance(req
                     jam_pulang_param=parseFloat((docs[0].clockout).replace(':', '.'));
             
                     if(jam_pulang < jam_pulang_param){
-                        ket_out = "Belum Waktu Pulang";
+                        ket_out = "Belum Waktu Jam Pulang";
                          
                         var attendanceChunks = [];
                             Attendance.find({
