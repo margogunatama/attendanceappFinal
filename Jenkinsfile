@@ -16,7 +16,6 @@ pipeline {
             steps {
                 script {
                     sh 'node --version || curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION | bash -'
-                    sh 'apt-get install -y nodejs'
                     sh 'npm install'
                 }
             }
