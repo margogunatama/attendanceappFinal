@@ -1,8 +1,8 @@
 pipeline {
-    agent any
-
-    environment {
-        NODE_VERSION = '18.x'
+    agent {
+        docker {
+            image 'node:18'
+        }
     }
 
     stages {
@@ -14,11 +14,7 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                script {
-                    sh 'node --version || curl -fsSL https://deb.nodesource.com/setup_$NODE_VERSION | bash -'
-                    sh 'sudo apt-get install -y nodejs'
-                    sh 'npm install'
-                }
+                sh 'npm install'
             }
         }
 
