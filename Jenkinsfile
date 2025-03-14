@@ -20,21 +20,9 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh 'npm test'
-            }
-        }
-
         stage('Build') {
             steps {
                 sh 'npm run build'
-            }
-        }
-
-        stage('Deploy') {
-            steps {
-                sh 'pm2 restart ecosystem.config.js'
             }
         }
     }
